@@ -1,9 +1,7 @@
 package mg.javaee.test.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Blob;
 import java.util.List;
@@ -14,6 +12,8 @@ import java.util.Map;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
+@Data
 public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,8 +25,19 @@ public class Person {
     @Column(name = "prenom")
     private String prenom;
 
+    private String description;
+
+    private String contact;
+
+    private String email;
+
+    @Lob
+    private Byte[] profil;
+
     @ElementCollection
     private List<String> skills;
+
+    private String country;
 
     private String rate;
 
@@ -34,7 +45,12 @@ public class Person {
 
     private String address;
 
+    private Double payRate;
 
     @ElementCollection
-    private Map<Byte[],String> piecejointes ;
+    @CollectionTable(name = "file_mapping", joinColumns = @JoinColumn(name = "container_id"))
+    @MapKeyColumn(name = "file_name")
+    @Lob
+    @Column(name = "file_data", columnDefinition = "LONGBLOB")
+    private Map<String,Byte[]> attachements;
 }

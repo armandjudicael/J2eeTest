@@ -1,4 +1,4 @@
-<%--
+<%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %><%--
   Created by IntelliJ IDEA.
   User: Admin
   Date: 13/06/2023
@@ -7,7 +7,6 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,8 +14,12 @@
     <title>candidate list</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <style>
+
+        .error {
+            color: red;
+        }
+
         body{
             background:#E6E6FA
         }
@@ -49,6 +52,7 @@
             color: #fff;
             border-color: danger;
         }
+
         .favorite-icon a {
             display: inline-block;
             width: 30px;
@@ -62,7 +66,6 @@
             -webkit-transition: all .5s ease;
             transition: all .5s ease;
         }
-
 
         .candidate-list-box .favorite-icon {
             position: absolute;
@@ -80,13 +83,26 @@
         .mt-1 {
             margin-top: 0.25rem!important;
         }
+
+        #uploaded-picture-container {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        #uploaded-picture {
+            width: 100%;
+            height: auto;
+        }
+
     </style>
 </head>
 <body>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.css" integrity="sha256-NAxhqDvtY0l4xn+YVa6WjAcmd94NNfttjNsDmNatFVc=" crossorigin="anonymous" />
 <section class="section">
     <div class="container">
-
         <div class="justify-content-center row mt-5">
             <div class="col-lg-12">
                 <div class="candidate-list-widgets mb-4">
@@ -139,98 +155,96 @@
                     </div>
                 </div>
                 <div class="candidate-list">
-
-                    <div class="candidate-list-box card mt-4">
-                        <div class="p-4 card-body">
-                            <!-- Candidate information row -->
-                            <div class="align-items-center row">
-                                <div class="col-auto">
-                                    <!-- Candidate avatar -->
-                                    <div class="candidate-list-images">
-                                        <a href="#"><img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt class="avatar-md img-thumbnail rounded-circle" /></a>
+                    <c:forEach var="person" items="${personList}">
+                        <div class="candidate-list-box card mt-4">
+                            <div class="p-4 card-body">
+                                <!-- Candidate information row -->
+                                <div class="align-items-center row">
+                                    <div class="col-auto">
+                                        <!-- Candidate avatar -->
+                                        <div class="candidate-list-images">
+                                            <a href="#"><img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt class="avatar-md img-thumbnail rounded-circle" /></a>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-lg-5">
-                                    <!-- Candidate details -->
-                                    <div class="candidate-list-content mt-3 mt-lg-0">
-                                        <h5 class="fs-19 mb-0">
-                                            <a class="primary-link" href="#">Charles Dickens</a>
-                                            <span class="badge bg-success ms-1"><i class="mdi mdi-star align-middle"></i>4.8</span>
-                                        </h5>
-                                        <p class="text-muted mb-2">Project Manager</p>
-                                        <ul class="list-inline mb-0 text-muted">
-                                            <li class="list-inline-item"><i class="mdi mdi-map-marker"></i> Oakridge Lane Richardson</li>
-                                            <li class="list-inline-item"><i class="mdi mdi-wallet"></i> $650 / hour</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="mt-2 mt-lg-0 d-flex flex-wrap align-items-start gap-1">
-                                        <span class="badge bg-soft-secondary fs-14 mt-1">Leader</span><span class="badge bg-soft-secondary fs-14 mt-1">Manager</span><span class="badge bg-soft-secondary fs-14 mt-1">Developer</span>
-                                    </div>
-                                </div>
-                                <div class="col-lg-2">
-                                    <!-- Candidate icons -->
-                                    <div class="mt-2 mt-lg-0 d-flex flex-wrap align-items-start gap-1">
-                                        <button class="btn btn-danger" onclick="deleteCandidate()"><i class="mdi mdi-delete"></i></button>
-                                        <button class="btn btn-primary" onclick="editCandidate()"><i class="mdi mdi-pencil"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion mt-3" id="candidate-accordion">
-                                <div class="accordion-item">
-                                    <!-- Accordion header -->
-                                    <h2 class="accordion-header" id="headingOne">
-                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                            Additional Details
-                                        </button>
-                                    </h2>
-                                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#candidate-accordion">
-                                        <div class="accordion-body">
-                                            <!-- Accordion content -->
-                                            <ul class="nav nav-tabs" id="candidate-tabs" role="tablist">
-                                                <li class="nav-item" role="presentation">
-                                                    <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="info" aria-selected="true">Info</button>
-                                                </li>
-                                                <li class="nav-item" role="presentation">
-                                                    <button class="nav-link" id="documents-tab1" data-bs-toggle="tab" data-bs-target="#documents1" type="button" role="tab" aria-controls="documents" aria-selected="false">Documents</button>
-                                                </li>
+                                    <div class="col-lg-5">
+                                        <!-- Candidate details -->
+                                        <div class="candidate-list-content mt-3 mt-lg-0">
+                                            <h5 class="fs-19 mb-0">
+                                                <a class="primary-link" href="#">${person.nom} ${person.prenom}</a>
+                                                <span class="badge bg-success ms-1"><i class="mdi mdi-star align-middle"></i>4.8</span>
+                                            </h5>
+                                            <p class="text-muted mb-2">${person.field}</p>
+                                            <ul class="list-inline mb-0 text-muted">
+                                                <li class="list-inline-item"><i class="mdi mdi-map-marker"></i> ${person.address}</li>
+                                                <li class="list-inline-item"><i class="mdi mdi-wallet"></i> ${person.rate} / hour</li>
                                             </ul>
-                                            <div class="tab-content mt-3" id="candidate-tab-content">
-                                                <!-- Info tab -->
-                                                <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
-                                                    <ul class="list-group list-group-flush">
-                                                        <li class="list-group-item">Education: Bachelor's Degree</li>
-                                                        <li class="list-group-item">Experience: 5+ years</li>
-                                                        <li class="list-group-item">Skills: Project Management, Leadership, Communication</li>
-                                                    </ul>
-                                                </div>
-                                                <!-- Documents tab -->
-                                                <div class="tab-pane fade" id="documents1" role="tabpanel" aria-labelledby="documents-tab">
-                                                    <table class="table">
-                                                        <thead>
-                                                        <tr>
-                                                            <th>Name</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                        <tr>
-                                                            <td>Document 1</td>
-                                                            <td>
-                                                                <a href="#">View</a>
-                                                                <a href="#">Download</a>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Document 2</td>
-                                                            <td>
-                                                                <a href="#">View</a>
-                                                                <a href="#">Download</a>
-                                                            </td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
+                                        <div class="mt-2 mt-lg-0 d-flex flex-wrap align-items-start gap-1">
+                                            <c:forEach var="skill" items="${person.skills}">
+                                                <span class="badge bg-soft-secondary fs-14 mt-1">${skill}</span>
+                                            </c:forEach>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <!-- Candidate icons -->
+                                        <div class="mt-2 mt-lg-0 d-flex flex-wrap align-items-start gap-1">
+                                            <button class="btn btn-danger" onclick="deleteCandidate()"><i class="mdi mdi-delete"></i></button>
+                                            <button class="btn btn-primary" onclick="editCandidate()"><i class="mdi mdi-pencil"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accordion mt-3" id="candidate-accordion">
+                                    <div class="accordion-item">
+                                        <!-- Accordion header -->
+                                        <h2 class="accordion-header" id="headingOne">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                Additional Details
+                                            </button>
+                                        </h2>
+                                        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#candidate-accordion">
+                                            <div class="accordion-body">
+                                                <!-- Accordion content -->
+                                                <ul class="nav nav-tabs" id="candidate-tabs" role="tablist">
+                                                    <li class="nav-item" role="presentation">
+                                                        <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="info" aria-selected="true">Info</button>
+                                                    </li>
+                                                    <li class="nav-item" role="presentation">
+                                                        <button class="nav-link" id="documents-tab1" data-bs-toggle="tab" data-bs-target="#documents1" type="button" role="tab" aria-controls="documents" aria-selected="false">Documents</button>
+                                                    </li>
+                                                </ul>
+                                                <div class="tab-content mt-3" id="candidate-tab-content">
+                                                    <!-- Info tab -->
+                                                    <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">
+                                                        <ul class="list-group list-group-flush">
+                                                            <li class="list-group-item">Education: Bachelor's Degree</li>
+                                                            <li class="list-group-item">Experience: 5+ years</li>
+                                                            <li class="list-group-item">Skills: Project Management, Leadership, Communication</li>
+                                                        </ul>
+                                                    </div>
+                                                    <!-- Documents tab -->
+                                                    <div class="tab-pane fade" id="documents1" role="tabpanel" aria-labelledby="documents-tab">
+                                                        <table class="table">
+                                                            <thead>
+                                                            <tr>
+                                                                <th>Name</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            <c:forEach var="attach" items="${person.attachements}">
+                                                                <tr>
+                                                                    <td>${attach.key}</td>
+                                                                    <td>
+                                                                        <a href="#">View</a>
+                                                                        <a href="#">Download</a>
+                                                                    </td>
+                                                                </tr>
+                                                            </c:forEach>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -238,193 +252,10 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-<%--                    <div class="candidate-list-box card mt-4">--%>
-<%--                        <div class="p-4 card-body">--%>
-<%--                            <div class="align-items-center row">--%>
-
-<%--                                <div class="col-auto">--%>
-<%--                                    <div class="candidate-list-images">--%>
-<%--                                        <a href="#"><img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt class="avatar-md img-thumbnail rounded-circle" /></a>--%>
-<%--                                    </div>--%>
-<%--                                </div>--%>
-
-<%--                                <div class="col-lg-5">--%>
-<%--                                    <div class="candidate-list-content mt-3 mt-lg-0">--%>
-<%--                                        <h5 class="fs-19 mb-0">--%>
-<%--                                            <a class="primary-link" href="#">Charles Dickens</a><span class="badge bg-success ms-1"><i class="mdi mdi-star align-middle"></i>4.8</span>--%>
-<%--                                        </h5>--%>
-<%--                                        <p class="text-muted mb-2">Project Manager</p>--%>
-<%--                                        <ul class="list-inline mb-0 text-muted">--%>
-<%--                                            <li class="list-inline-item"><i class="mdi mdi-map-marker"></i> Oakridge Lane Richardson</li>--%>
-<%--                                            <li class="list-inline-item"><i class="mdi mdi-wallet"></i> $650 / hour</li>--%>
-<%--                                        </ul>--%>
-<%--                                    </div>--%>
-<%--                                </div>--%>
-
-<%--                                <div class="col-lg-4">--%>
-<%--                                    <div class="mt-2 mt-lg-0 d-flex flex-wrap align-items-start gap-1">--%>
-<%--                                        <span class="badge bg-soft-secondary fs-14 mt-1">Leader</span><span class="badge bg-soft-secondary fs-14 mt-1">Manager</span><span class="badge bg-soft-secondary fs-14 mt-1">Developer</span>--%>
-<%--                                    </div>--%>
-<%--                                </div>--%>
-
-<%--                                <div class="col-lg-4">--%>
-<%--                                    <!-- Candidate badges -->--%>
-<%--                                    <div class="mt-2 mt-lg-0 d-flex flex-wrap align-items-start gap-1">--%>
-<%--                                        <button class="btn btn-danger" onclick="deleteCandidate()">Delete</button>--%>
-<%--                                        <button class="btn btn-primary" onclick="editCandidate()">Edit</button>--%>
-<%--                                    </div>--%>
-<%--                                </div>--%>
-
-<%--                            </div>--%>
-<%--                            <div class="accordion mt-3" id="candidate-accordion">--%>
-<%--                                <div class="accordion-item">--%>
-<%--                                    <h2 class="accordion-header" id="headingOne">--%>
-<%--                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">--%>
-<%--                                            Additional Details--%>
-<%--                                        </button>--%>
-<%--                                    </h2>--%>
-<%--                                    <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#candidate-accordion">--%>
-<%--                                        <div class="accordion-body">--%>
-<%--                                            <ul class="nav nav-tabs" id="candidate-tabs" role="tablist">--%>
-<%--                                                <li class="nav-item" role="presentation">--%>
-<%--                                                    <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab" aria-controls="info" aria-selected="true">Info</button>--%>
-<%--                                                </li>--%>
-<%--                                                <li class="nav-item" role="presentation">--%>
-<%--                                                    <button class="nav-link" id="documents-tab1" data-bs-toggle="tab" data-bs-target="#documents1" type="button" role="tab" aria-controls="documents" aria-selected="false">Documents</button>--%>
-<%--                                                </li>--%>
-<%--                                            </ul>--%>
-<%--                                            <div class="tab-content mt-3" id="candidate-tab-content">--%>
-<%--                                                <div class="tab-pane fade show active" id="info" role="tabpanel" aria-labelledby="info-tab">--%>
-<%--                                                    <ul class="list-group list-group-flush">--%>
-<%--                                                        <li class="list-group-item">Education: Bachelor's Degree</li>--%>
-<%--                                                        <li class="list-group-item">Experience: 5+ years</li>--%>
-<%--                                                        <li class="list-group-item">Skills: Project Management, Leadership, Communication</li>--%>
-<%--                                                    </ul>--%>
-<%--                                                </div>--%>
-<%--                                                <div class="tab-pane fade" id="documents1" role="tabpanel" aria-labelledby="documents-tab">--%>
-<%--                                                    <table class="table">--%>
-<%--                                                        <thead>--%>
-<%--                                                        <tr>--%>
-<%--                                                            <th>Name</th>--%>
-<%--                                                            <th>Action</th>--%>
-<%--                                                        </tr>--%>
-<%--                                                        </thead>--%>
-<%--                                                        <tbody>--%>
-<%--                                                        <tr>--%>
-<%--                                                            <td>Document 1</td>--%>
-<%--                                                            <td>--%>
-<%--                                                                <a href="#">View</a>--%>
-<%--                                                                <a href="#">Download</a>--%>
-<%--                                                            </td>--%>
-<%--                                                        </tr>--%>
-<%--                                                        <tr>--%>
-<%--                                                            <td>Document 2</td>--%>
-<%--                                                            <td>--%>
-<%--                                                                <a href="#">View</a>--%>
-<%--                                                                <a href="#">Download</a>--%>
-<%--                                                            </td>--%>
-<%--                                                        </tr>--%>
-<%--                                                        </tbody>--%>
-<%--                                                    </table>--%>
-<%--                                                </div>--%>
-<%--                                            </div>--%>
-<%--                                        </div>--%>
-<%--                                    </div>--%>
-<%--                                </div>--%>
-<%--                            </div>--%>
-<%--                        </div>--%>
-<%--                    </div>--%>
-
-
-<%--                    <div class="candidate-list-box card mt-4">--%>
-<%--                        <div class="p-4 card-body">--%>
-<%--                            <div class="align-items-center row">--%>
-<%--                                <div class="col-auto">--%>
-<%--                                    <div class="candidate-list-images">--%>
-<%--                                        <a href="#"><img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt class="avatar-md img-thumbnail rounded-circle" /></a>--%>
-<%--                                    </div>--%>
-<%--                                </div>--%>
-<%--                                <div class="col-lg-5">--%>
-<%--                                    <div class="candidate-list-content mt-3 mt-lg-0">--%>
-<%--                                        <h5 class="fs-19 mb-0">--%>
-<%--                                            <a class="primary-link" href="#">Charles Dickens</a><span class="badge bg-success ms-1"><i class="mdi mdi-star align-middle"></i>4.8</span>--%>
-<%--                                        </h5>--%>
-<%--                                        <p class="text-muted mb-2">Project Manager</p>--%>
-<%--                                        <ul class="list-inline mb-0 text-muted">--%>
-<%--                                            <li class="list-inline-item"><i class="mdi mdi-map-marker"></i> Oakridge Lane Richardson</li>--%>
-<%--                                            <li class="list-inline-item"><i class="mdi mdi-wallet"></i> $650 / hour</li>--%>
-<%--                                        </ul>--%>
-<%--                                    </div>--%>
-<%--                                </div>--%>
-<%--                                <div class="col-lg-4">--%>
-<%--                                    <div class="mt-2 mt-lg-0 d-flex flex-wrap align-items-start gap-1">--%>
-<%--                                        <span class="badge bg-soft-secondary fs-14 mt-1">Leader</span><span class="badge bg-soft-secondary fs-14 mt-1">Manager</span><span class="badge bg-soft-secondary fs-14 mt-1">Developer</span>--%>
-<%--                                    </div>--%>
-<%--                                </div>--%>
-<%--                            </div>--%>
-<%--                            <div class="favorite-icon">--%>
-<%--                                <a href="#"><i class="mdi mdi-heart fs-18"></i></a>--%>
-<%--                            </div>--%>
-<%--                            <div class="accordion mt-3" id="candidate-accordion">--%>
-<%--                                <div class="accordion-item">--%>
-<%--                                    <h2 class="accordion-header" id="headingOne">--%>
-<%--                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">--%>
-<%--                                            Additional Details--%>
-<%--                                        </button>--%>
-<%--                                    </h2>--%>
-<%--                                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#candidate-accordion">--%>
-<%--                                        <div class="accordion-body">--%>
-<%--                                            <ul class="list-group list-group-flush">--%>
-<%--                                                <li class="list-group-item">Education: Bachelor's Degree</li>--%>
-<%--                                                <li class="list-group-item">Experience: 5+ years</li>--%>
-<%--                                                <li class="list-group-item">Skills: Project Management, Leadership, Communication</li>--%>
-<%--                                            </ul>--%>
-<%--                                        </div>--%>
-<%--                                    </div>--%>
-<%--                                </div>--%>
-<%--                            </div>--%>
-<%--                        </div>--%>
-<%--                    </div>--%>
-
-<%--                    <div class="candidate-list-box card mt-4">--%>
-
-<%--                        <div class="p-4 card-body">--%>
-<%--                            <div class="align-items-center row">--%>
-<%--                                <div class="col-auto">--%>
-<%--                                    <div class="candidate-list-images">--%>
-<%--                                        <a href="#"><img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt class="avatar-md img-thumbnail rounded-circle" /></a>--%>
-<%--                                    </div>--%>
-<%--                                </div>--%>
-<%--                                <div class="col-lg-5">--%>
-<%--                                    <div class="candidate-list-content mt-3 mt-lg-0">--%>
-<%--                                        <h5 class="fs-19 mb-0">--%>
-<%--                                            <a class="primary-link" href="#">Charles Dickens</a><span class="badge bg-success ms-1"><i class="mdi mdi-star align-middle"></i>4.8</span>--%>
-<%--                                        </h5>--%>
-<%--                                        <p class="text-muted mb-2">Project Manager</p>--%>
-<%--                                        <ul class="list-inline mb-0 text-muted">--%>
-<%--                                            <li class="list-inline-item"><i class="mdi mdi-map-marker"></i> Oakridge Lane Richardson</li>--%>
-<%--                                            <li class="list-inline-item"><i class="mdi mdi-wallet"></i> $650 / hours</li>--%>
-<%--                                        </ul>--%>
-<%--                                    </div>--%>
-<%--                                </div>--%>
-<%--                                <div class="col-lg-4">--%>
-<%--                                    <div class="mt-2 mt-lg-0 d-flex flex-wrap align-items-start gap-1">--%>
-<%--                                        <span class="badge bg-soft-secondary fs-14 mt-1">Leader</span><span class="badge bg-soft-secondary fs-14 mt-1">Manager</span><span class="badge bg-soft-secondary fs-14 mt-1">Developer</span>--%>
-<%--                                    </div>--%>
-<%--                                </div>--%>
-<%--                            </div>--%>
-<%--                            <div class="favorite-icon">--%>
-<%--                                <a href="#"><i class="mdi mdi-heart fs-18"></i></a>--%>
-<%--                            </div>--%>
-<%--                        </div>--%>
-<%--                    </div>--%>
-
+                    </c:forEach>
                 </div>
             </div>
         </div>
-
         <div class="row">
             <div class="mt-4 pt-2 col-lg-12">
                 <nav aria-label="Page navigation example">
@@ -443,135 +274,69 @@
                 </nav>
             </div>
         </div>
-
-
         <!-- /.modal -->
-
     </div>
 </section>
-<!-- Standard modal -->
-<div id="new-person" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="standard-modalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <form id="form-nouveau-societe" class="modal-content">
-            <!-- Modal header -->
-            <div class="modal-header">
-                <h4 class="modal-title">Nouveau Candidat</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
-            </div>
-            <!-- Modal body -->
-            <div class="modal-body">
-                <!-- Nav tabs -->
-                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="person-tab" data-bs-toggle="tab" data-bs-target="#person" type="button" role="tab" aria-controls="person" aria-selected="true">Person Information</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="documents-tab" data-bs-toggle="tab" data-bs-target="#documents" type="button" role="tab" aria-controls="documents" aria-selected="false">Documents</button>
-                    </li>
-                </ul>
 
-                <!-- Tab panes -->
-                <div class="tab-content" id="myTabContent">
-                    <!-- Person Information tab -->
-                    <div class="tab-pane fade show active" id="person" role="tabpanel" aria-labelledby="person-tab">
-                        <!-- Company details -->
-                        <div class="mb-1">
-                            <!-- Company name -->
-                            <div class="row">
-                                <div class="col-12">
-                                    <label for="input-nom" class="form-label"> Nom </label>
-                                    <input name="nom" type="text" id="input-nom" class="form-control">
-                                </div>
-                            </div>
+<tags:new-person-modal/>
 
-                        </div>
-                        <div class="mb-1">
-                            <!-- Company name -->
-                            <div class="row">
-                                <div class="col-12">
-                                    <label for="input-nom" class="form-label"> Prenom </label>
-                                    <input name="nom" type="text" id="input-prenom" class="form-control">
-                                </div>
-                            </div>
-
-                        </div>
-                        <!-- Address and contact -->
-                        <div class="mb-1">
-                            <div class="row">
-                                <div class="col-6">
-                                    <label for="input-adresse" class="form-label">Adresse</label>
-                                    <input name="adresse" type="text" id="input-adresse" class="form-control">
-                                </div>
-                                <div class="col-6">
-                                    <label for="input-contact" class="form-label">Contact</label>
-                                    <input name="contact" type="text" id="input-contact" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Slogan -->
-                        <div class="mb-1">
-                            <div class="row">
-                                <div class="col-12">
-                                    <label for="description" class="form-label">Description</label>
-                                    <textarea id="description" class="form-control" rows="3"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Documents tab -->
-                    <div class="tab-pane fade" id="documents" role="tabpanel" aria-labelledby="documents-tab">
-                        <!-- Document details -->
-                        <div class="mb-1">
-                            <!-- Document name -->
-                            <div class="mb-1 pt-1">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="input-group">
-                                            <input name="logo" type="file" id="input-logo" class="form-control">
-                                            <button id="add-button" class="btn btn-primary" type="button">
-                                                <i class="bi bi-plus-circle-fill"></i> Add
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Document table -->
-                            <table id="document-table-body" class="table">
-                                <thead>
-                                <tr>
-                                    <th>Document Name</th>
-                                    <th>Author</th>
-                                    <th>Date</th>
-                                </tr>
-                                </thead>
-                                <tbody  >
-                                <!-- Add more rows as needed -->
-                                </tbody>
-                            </table>
-
-                        </div>
-                        <!-- Other document details -->
-                        <!-- Add your code for document-related inputs here -->
-                    </div>
-                </div>
-            </div>
-            <!-- Modal footer -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Annuler</button>
-                <button id="btn-enregistrer-societe" type="submit" class="btn btn-primary">Enregistrer</button>
-            </div>
-        </form><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div>
-
-<%--<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>--%>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
-<script type="text/javascript">
-</script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
+<!-- jQuery UI library -->
+<script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
 <script>
     $(document).ready(function() {
+
+        // Pagination settings
+        const itemsPerPage = 10; // Number of items to display per page
+        let currentPage = 1; // Current page number
+        const totalPages = 4; // Total number of pages
+
+        // Display the current page
+        function displayCurrentPage() {
+            $('.pagination .page-item').removeClass('active');
+            $('.pagination .page-item:eq(' + currentPage + ')').addClass('active');
+
+            // TODO: Update the content based on the current page
+            // Example: Show/hide relevant content or make an AJAX request
+        }
+        // Handle previous page event
+        function goToPreviousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                displayCurrentPage();
+            }
+        }
+
+        // Handle next page event
+        function goToNextPage() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayCurrentPage();
+            }
+        }
+
+        // Handle specific page number event
+        function goToPage(pageNumber) {
+            if (pageNumber >= 1 && pageNumber <= totalPages) {
+                currentPage = pageNumber;
+                displayCurrentPage();
+            }
+        }
+
+        // Example event listeners using jQuery
+        $('.pagination .page-item:first-child').on('click', goToPreviousPage);
+        $('.pagination .page-item:last-child').on('click', goToNextPage);
+        $('.pagination .page-item:not(:first-child):not(:last-child)').on('click', function() {
+            const pageNumber = parseInt($(this).text());
+            goToPage(pageNumber);
+        });
+
+        // Initial display
+        displayCurrentPage();
+
         $('#add-button').click(function() {
             // Get the selected file from the input field
             var fileInput = $('#input-logo')[0];
@@ -597,11 +362,11 @@
 
             // Create cells for the table row
             var documentNameCell = $('<td></td>').text(file.name);
-            var authorCell = $('<td></td>').text('Author');
+            var typeCell = $('<td></td>').text(file.name.split('.').pop()); // Display the file extension in the 'Type' column
             var dateCell = $('<td></td>').text(new Date().toISOString().split('T')[0]);
 
             // Append cells to the new row
-            newRow.append(documentNameCell, authorCell, dateCell);
+            newRow.append(documentNameCell, typeCell, dateCell);
 
             // Append the new row to the table body
             $('#document-table-body').append(newRow);
@@ -609,8 +374,77 @@
             // Clear the file input field
             fileInput.value = "";
         });
+
+
+        // PROFIL PICTURE
+
+        $('#input-profil-picture').change(function(){
+            var file = this.files[0];
+            var fileType = file.type.toLowerCase();
+            var allowedExtensions = ['jpeg', 'jpg', 'png', 'gif'];
+
+            // if (allowedExtensions.indexOf(fileType) === -1) {
+            //     // Clear the input field if the selected file is not an image
+            //     $(this).val('');
+            //     alert('Please select a valid image file (JPEG, JPG, PNG, or GIF).');
+            // } else {
+                var reader = new FileReader();
+                reader.onloadend = function() {
+                    $('#uploaded-picture').attr('src', reader.result);
+                }
+                if (file) {
+                    reader.readAsDataURL(file);
+                }
+            // }
+        });
+
+        // FROM VALIDATION
+
+        $('#form-nouveau-societe').validate({
+            rules: {
+                nom: 'required',
+                prenom: 'required',
+                adresse: 'required',
+                contact: 'required',
+                email: {
+                    required: true,
+                    email: true
+                },
+                rate: {
+                    required: true,
+                    range: [1, 10]
+                },
+                'pay-rate': 'required',
+                country: 'required',
+                description: {
+                    required: true
+                }
+            },
+            messages: {
+                nom: 'Please enter your Nom',
+                prenom: 'Please enter your Prenom',
+                adresse: 'Please enter your Adresse',
+                contact: 'Please enter your Contact',
+                email: {
+                    required: 'Please enter your Email',
+                    email: 'Please enter a valid Email'
+                },
+                rate: {
+                    required: 'Please enter a Rate',
+                    range: 'Rate must be between 1 and 10'
+                },
+                'pay-rate': 'Please enter Pay Rate',
+                country: 'Please select a Country',
+                description: {
+                    required: "Please enter a description"
+                }
+            },
+            submitHandler: function(form) {
+                form.submit();
+            }
+        });
+
     });
 </script>
-
 </body>
 </html>

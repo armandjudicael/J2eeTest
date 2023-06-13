@@ -1,28 +1,117 @@
 package mg.javaee.test.ressources;
 
+import jakarta.inject.Inject;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
+import mg.javaee.test.entity.Person;
 import mg.javaee.test.service.PersonService;
+import org.apache.commons.io.IOUtils;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.List;
+import java.util.Map;
 
-@WebServlet(name = "Person List",value = {"/","/PersonList"})
+@WebServlet(name = "PersonList",value = {"/","/PersonList", "/addPerson"})
+@MultipartConfig(
+        fileSizeThreshold = 1024*1024,
+        maxFileSize = 1024*1024*100,
+        maxRequestSize = 1024*1024*100
+)
 public class PersonRessources extends HttpServlet {
-    /**
-     * @param config the <code>ServletConfig</code> object that contains configuration information for this servlet
-     * @throws ServletException
-     */
     private PersonService personService;
+    private static  final  String UPLOAD_DIRECTORY = "uploads";
     @Override
     public void init(ServletConfig config) throws ServletException {
        personService = PersonService.getInstance();
     }
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        List<Person> personList = personService.findAll();
+        req.setAttribute("personList",personList);
         req.getRequestDispatcher("/jsp/PersonList.jsp").forward(req,resp);
+    }
+    private void extractInfo(HttpServletRequest req) throws ServletException, IOException {
+        // Retrieve uploaded file
+        Part filePart = req.getPart("profil_picture");
+        String uploadPath = req.getServletContext().getRealPath("") + File.separator + UPLOAD_DIRECTORY;
+        File uploadDir = new File(uploadPath);
+        if (!uploadDir.exists()) {
+            boolean mkdir = uploadDir.mkdir();
+        }
+        String fileName = filePart.getSubmittedFileName();
+        Path filePath = Path.of(uploadPath, fileName);
+        // Save the uploaded file to the specified directory
+        try (InputStream fileContent = filePart.getInputStream()) {
+            Files.copy(fileContent, filePath, StandardCopyOption.REPLACE_EXISTING);
+        }
+        persistUser(req, filePart, fileName);
+    }
+
+    private void persistUser(HttpServletRequest req, Part filePart, String fileName) throws IOException {
+        // Retrieve form data
+        String nom = req.getParameter("nom");
+        String prenom = req.getParameter("prenom");
+        String adresse = req.getParameter("adresse");
+        String contact = req.getParameter("contact");
+        String description = req.getParameter("description");
+        String rate= req.getParameter("rate");
+        String email = req.getParameter("email");
+        Double payRate = Double.parseDouble(req.getParameter("pay-rate"));
+        String country = req.getParameter("country");
+       // String[] selectedFields = req.getParameterValues("multiSelect");
+
+        Person person = Person.builder()
+                .nom(nom)
+                .prenom(prenom)
+                .address(adresse)
+                .contact(contact)
+                .description(description)
+                .rate(rate)
+                .email(email)
+              //  .skills(List.of(selectedFields))
+                .payRate(payRate)
+                .country(country)
+                .profil(toBytes(filePart.getInputStream()))
+                .build();
+
+        personService.create(person);
+    }
+
+    private Byte[] toBytes( InputStream inputStream ){
+        Byte[] byteObjects = {};
+        try {
+            byte[] byteArray = IOUtils.toByteArray(inputStream);
+            // Convert byte array to Byte[]
+             byteObjects = new Byte[byteArray.length];
+            int i = 0;
+            for (byte b : byteArray) {
+                byteObjects[i++] = b; // Autoboxing
+            }
+            return byteObjects;
+        } catch (IOException e) {
+            // Handle the exception
+        } finally {
+            IOUtils.closeQuietly(inputStream);
+        }
+        return byteObjects;
+    }
+    private void persistPersonDocuments(HttpServletRequest req){
+
+    }
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+       extractInfo(req);
+       doGet(req,resp);
     }
 }

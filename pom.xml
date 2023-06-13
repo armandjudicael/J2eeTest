@@ -40,6 +40,12 @@
         </dependency>
 
         <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.11.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>6.0.2.Final</version>
@@ -82,6 +88,30 @@
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.3.2</version>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.cargo</groupId>
+                <artifactId>cargo-maven3-plugin</artifactId>
+                <configuration>
+                    <container>
+                        <containerId>tomcat10x</containerId>
+                        <artifactInstaller>
+                            <groupId>org.apache.tomcat</groupId>
+                            <artifactId>tomcat</artifactId>
+                            <version>${tomcat.version}</version>
+                        </artifactInstaller>
+                    </container>
+
+                    <configuration>
+                        <properties>
+                            <!-- <cargo.servlet.port>8080</cargo.servlet.port>-->
+                            <cargo.logging>low</cargo.logging>
+                        </properties>
+                    </configuration>
+                </configuration>
+            </plugin>
+
         </plugins>
+
+
     </build>
 </project>
