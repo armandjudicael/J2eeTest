@@ -1,15 +1,10 @@
 package mg.javaee.test.service;
 
-import jakarta.ejb.Singleton;
-import jakarta.ejb.Stateless;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
 import jakarta.persistence.*;
 import lombok.Data;
 import mg.javaee.test.entity.Person;
-import org.hibernate.SessionFactory;
 
+import java.util.Collection;
 import java.util.List;
 
 
@@ -18,7 +13,7 @@ public class PersonService  implements BasicServiceMethod<Person>{
 
 
     private static EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("pu");
-    private static EntityManager entityManager = entityManagerFactory.createEntityManager();
+    private static EntityManager em = entityManagerFactory.createEntityManager();
     private static PersonService personService;
     public static PersonService getInstance (){
         if (personService == null)
@@ -30,10 +25,24 @@ public class PersonService  implements BasicServiceMethod<Person>{
      * @return
      */
     @Override
-    public Person create(Person object) {
-        entityManager.getTransaction().begin();
-        entityManager.persist(object);
-        entityManager.getTransaction().commit();
+    public Collection<Person> saveAll(Collection<Person> object){
+        for (Person person : object) {
+            em.getTransaction().begin();
+            em.persist(person);
+            em.getTransaction().commit();
+        }
+        return object;
+    }
+
+    /**
+     * @param object
+     * @return
+     */
+    @Override
+    public Person save(Person object) {
+        em.getTransaction().begin();
+        em.persist(object);
+        em.getTransaction().commit();
         return object;
     }
     /**
@@ -59,7 +68,19 @@ public class PersonService  implements BasicServiceMethod<Person>{
      */
     @Override
     public Boolean deleteById(Long id) {
-        return null;
+        // Begin transaction
+        em.getTransaction().begin();
+
+        // Find the entity by ID
+        Person entity = findById(id);
+
+        if (entity != null)
+            // Delete the entity
+            em.remove(entity);
+
+        // Commit the transaction
+        em.getTransaction().commit();
+        return true;
     }
 
     /**
@@ -77,7 +98,7 @@ public class PersonService  implements BasicServiceMethod<Person>{
     @Override
     public List<Person> findAll() {
         String jpql = "SELECT p FROM Person p"; // Replace "Entity" with your entity class name
-        TypedQuery<Person> query = entityManager.createQuery(jpql,Person.class);
+        TypedQuery<Person> query = em.createQuery(jpql,Person.class);
         return query.getResultList();
     }
     /**
@@ -86,7 +107,7 @@ public class PersonService  implements BasicServiceMethod<Person>{
      */
     @Override
     public Person findById(Long id) {
-        return null;
+       return em.find(Person.class, id);
     }
 
     // Other methods for CRUD operations

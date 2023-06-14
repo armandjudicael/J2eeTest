@@ -148,6 +148,7 @@
                             </div>
                         </div>
                     </div>
+
                     <!-- Documents tab -->
                     <div class="tab-pane fade" id="documents" role="tabpanel" aria-labelledby="documents-tab">
                         <!-- Document details -->
@@ -157,7 +158,7 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="input-group">
-                                            <input name="logo" type="file" id="input-logo" class="form-control">
+                                            <input name="attach-0" type="file" id="attach-0" class="form-control">
                                             <button id="add-button" class="btn btn-primary" type="button">
                                                 <i class="bi bi-plus-circle-fill"></i> Add
                                             </button>
@@ -174,14 +175,16 @@
                                     <th>Date</th>
                                 </tr>
                                 </thead>
-                                <tbody  >
+                                <tbody>
                                 <!-- Add more rows as needed -->
                                 </tbody>
                             </table>
-
                         </div>
                         <!-- Other document details -->
                         <!-- Add your code for document-related inputs here -->
+                    </div>
+                    <div id="upload-documents" class="d-none">
+
                     </div>
                 </div>
             </div>

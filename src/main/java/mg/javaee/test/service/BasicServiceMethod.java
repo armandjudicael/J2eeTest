@@ -1,9 +1,11 @@
 package mg.javaee.test.service;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface BasicServiceMethod<T>{
-   T create(T object);
+   Collection<T> saveAll(Collection<T> object);
+   T save(T object);
    T updateById (Long id);
 
    T update(T object,Long id);

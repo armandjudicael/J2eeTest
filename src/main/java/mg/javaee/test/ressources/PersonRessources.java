@@ -1,7 +1,8 @@
 package mg.javaee.test.ressources;
 
-import jakarta.inject.Inject;
+import com.github.javafaker.Faker;
 import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -19,8 +20,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @WebServlet(name = "PersonList",value = {"/","/PersonList", "/addPerson"})
 @MultipartConfig(
@@ -31,24 +31,90 @@ import java.util.Map;
 public class PersonRessources extends HttpServlet {
     private PersonService personService;
     private static  final  String UPLOAD_DIRECTORY = "uploads";
+    private static final String ATTACH_DIRECTORY_NAME = "attach";
     @Override
     public void init(ServletConfig config) throws ServletException {
-       personService = PersonService.getInstance();
+        personService = PersonService.getInstance();
+        personService.saveAll(generateMockPersons(10));
     }
+
+    public static List<Person> generateMockPersons(int count) {
+        Faker faker = new Faker(new Locale("en-GB"));
+        List<Person> persons = new ArrayList<>();
+
+        for (int i = 0; i < count; i++) {
+            Person person = new Person();
+            person.setNom(faker.name().lastName());
+            person.setPrenom(faker.name().firstName());
+            person.setDescription(faker.lorem().sentence());
+            person.setContact(faker.phoneNumber().phoneNumber());
+            person.setEmail(faker.internet().emailAddress());
+            person.setSkills(generateRandomSkills(faker));
+            person.setCountry(faker.address().country());
+            person.setRate(faker.currency().code() + " " + faker.number().randomDouble(2, 10, 100));
+            person.setField(faker.job().field());
+            person.setAddress(faker.address().fullAddress());
+            person.setPayRate(faker.number().randomDouble(2, 100, 1000));
+            person.setAttachements(generateAttachments());
+
+            persons.add(person);
+        }
+
+        return persons;
+    }
+
+    private static List<String> generateRandomSkills(Faker faker) {
+        List<String> skills = new ArrayList<>();
+        int skillsCount = faker.random().nextInt(1, 5);
+
+        for (int i = 0; i < skillsCount; i++) {
+            skills.add(faker.job().keySkills());
+        }
+
+        return skills;
+    }
+
+    private static Map<String, Byte[]> generateAttachments() {
+        Map<String, Byte[]> attachments = new HashMap<>();
+        String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+        String attachmentsDirectoryPath = rootPath + ATTACH_DIRECTORY_NAME;
+        File attachDirectory = new File(attachmentsDirectoryPath);
+        // Generate mock attachments from the files in the directory
+        if (attachDirectory.exists() && attachDirectory.isDirectory()) {
+            File[] files = attachDirectory.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    try {
+                        byte[] fileData = Files.readAllBytes(file.toPath());
+                        Byte[] fileDataWrapper = toWrapperArray(fileData);
+                        attachments.put(file.getName(), fileDataWrapper);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return attachments;
+    }
+    private static Byte[] toWrapperArray(byte[] byteArray) {
+        Byte[] wrapperArray = new Byte[byteArray.length];
+        for (int i = 0; i < byteArray.length; i++) {
+            wrapperArray[i] = byteArray[i];
+        }
+        return wrapperArray;
+    }
+
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<Person> personList = personService.findAll();
         req.setAttribute("personList",personList);
-        req.getRequestDispatcher("/jsp/PersonList.jsp").forward(req,resp);
+        req.getRequestDispatcher("/jsp/index.jsp").forward(req,resp);
     }
     private void extractInfo(HttpServletRequest req) throws ServletException, IOException {
         // Retrieve uploaded file
         Part filePart = req.getPart("profil_picture");
-        String uploadPath = req.getServletContext().getRealPath("") + File.separator + UPLOAD_DIRECTORY;
-        File uploadDir = new File(uploadPath);
-        if (!uploadDir.exists()) {
-            boolean mkdir = uploadDir.mkdir();
-        }
+        String uploadPath = getUploadDir(req);
         String fileName = filePart.getSubmittedFileName();
         Path filePath = Path.of(uploadPath, fileName);
         // Save the uploaded file to the specified directory
@@ -58,7 +124,16 @@ public class PersonRessources extends HttpServlet {
         persistUser(req, filePart, fileName);
     }
 
-    private void persistUser(HttpServletRequest req, Part filePart, String fileName) throws IOException {
+    private static String getUploadDir(HttpServletRequest req) {
+        String uploadPath = req.getServletContext().getRealPath("") + File.separator + UPLOAD_DIRECTORY;
+        File uploadDir = new File(uploadPath);
+        if (!uploadDir.exists()) {
+            boolean mkdir = uploadDir.mkdir();
+        }
+        return uploadPath;
+    }
+
+    private void persistUser(HttpServletRequest req, Part filePart, String fileName) throws IOException, ServletException {
         // Retrieve form data
         String nom = req.getParameter("nom");
         String prenom = req.getParameter("prenom");
@@ -83,9 +158,10 @@ public class PersonRessources extends HttpServlet {
                 .payRate(payRate)
                 .country(country)
                 .profil(toBytes(filePart.getInputStream()))
+                .attachements(extractDocuments(req))
                 .build();
 
-        personService.create(person);
+        personService.save(person);
     }
 
     private Byte[] toBytes( InputStream inputStream ){
@@ -106,8 +182,37 @@ public class PersonRessources extends HttpServlet {
         }
         return byteObjects;
     }
-    private void persistPersonDocuments(HttpServletRequest req){
-
+    // Utility method to extract the file name from a Part
+    private String getFileName(Part part) {
+        String contentDisposition = part.getHeader("content-disposition");
+        String[] elements = contentDisposition.split(";");
+        for (String element : elements) {
+            if (element.trim().startsWith("filename")) {
+                return element.substring(element.indexOf('=') + 1).trim().replace("\"", "");
+            }
+        }
+        return "";
+    }
+    private Map<String,Byte[]> extractDocuments(HttpServletRequest req) throws ServletException, IOException {
+        // Get the collection of uploaded parts
+        Collection<Part> parts = req.getParts();
+        String uploadPath = getUploadDir(req);
+        Map<String,Byte[]> map = new java.util.HashMap<>();
+        // Iterate over the parts and process each uploaded file
+        for (Part part : parts) {
+            // Check if the part belongs to the "upload-documents" div
+            if (part.getName().startsWith("attach-")) {
+                // Extract the filename from the part
+                String fileName = getFileName(part);
+                // Save the file to the upload directory
+                String filePath = uploadPath+fileName;
+                try (InputStream input = part.getInputStream()) {
+                    Files.copy(input, new File(filePath).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    map.put(fileName,toBytes(input));
+                }
+            }
+        }
+         return map;
     }
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
