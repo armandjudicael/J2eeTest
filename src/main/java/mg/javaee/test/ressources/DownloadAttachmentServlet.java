@@ -14,7 +14,6 @@ import java.util.Map;
 
 @WebServlet("/downloadAttachment")
 public class DownloadAttachmentServlet extends HttpServlet {
-
     private PersonService personService;
     /**
      * @throws ServletException
@@ -34,7 +33,7 @@ public class DownloadAttachmentServlet extends HttpServlet {
 
         if (person != null) {
             // Retrieve the attachment byte array from the Person's attachements map based on the filename
-            Map<String, Byte[]> attachments = person.getAttachements();
+            Map<String, Byte[]> attachments = person.getAttachments();
             Byte[] attachmentBytes = attachments.get(filename);
 
             if (attachmentBytes != null) {

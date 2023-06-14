@@ -39,7 +39,7 @@ public class PersonService  implements BasicServiceMethod<Person>{
      * @return
      */
     @Override
-    public Person save(Person object) {
+    public Person save(Person object){
         em.getTransaction().begin();
         em.persist(object);
         em.getTransaction().commit();
@@ -110,5 +110,24 @@ public class PersonService  implements BasicServiceMethod<Person>{
        return em.find(Person.class, id);
     }
 
-    // Other methods for CRUD operations
+    public void removeAttachement(Long personId,String attachmentName){
+        em.getTransaction().begin();
+        Person person = em.find(Person.class, personId);
+        if (person != null) {
+            person.getAttachments().remove(attachmentName);
+            em.merge(person);
+        }
+        em.getTransaction().commit();
+    }
+
+    public List<Person> findByName(String character){
+        // Create the JPQL query
+        String jpql = "SELECT p FROM Person p WHERE p.nom  LIKE :character or p.prenom  LIKE :character ";
+// Execute the query
+        TypedQuery<Person> query = em.createQuery(jpql, Person.class);
+        query.setParameter("character", "%" + character + "%"); // Adding wildcards to match any occurrence of the character
+        return query.getResultList();
+    }
+
+
 }

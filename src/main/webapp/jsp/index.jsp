@@ -7,6 +7,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="java.util.Base64" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,15 +16,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-
-        .scrollable {
-            max-height: 400px; /* Adjust the height as per your requirement */
-            overflow-y: auto;
-        }
-
-        .error {
-            color: red;
-        }
 
         body{
             background:#E6E6FA
@@ -103,9 +95,10 @@
         }
 
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.css" integrity="sha256-NAxhqDvtY0l4xn+YVa6WjAcmd94NNfttjNsDmNatFVc=" crossorigin="anonymous" />
 </head>
-<body>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.3.45/css/materialdesignicons.css" integrity="sha256-NAxhqDvtY0l4xn+YVa6WjAcmd94NNfttjNsDmNatFVc=" crossorigin="anonymous" />
+<body style="background: #E6E6FA;" >
+
 <section class="section">
     <div class="container">
         <div class="row">
@@ -116,17 +109,6 @@
                     <div class="col-lg-4">
                         <div class="candidate-list-widgets">
                             <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="selection-widget">
-                                        <select class="form-select" data-trigger="true" name="choices-single-filter-orderby" id="choices-single-filter-orderby" aria-label="Default select example">
-                                            <option value="df">Default</option>
-                                            <option value="ne">Newest</option>
-                                            <option value="od">Oldest</option>
-                                            <option value="rd">Random</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
                                     <div class="selection-widget mt-2 mt-lg-0">
                                         <select class="form-select" data-trigger="true" name="choices-candidate-page" id="choices-candidate-page" aria-label="Default select example">
                                             <option value="df">All</option>
@@ -134,7 +116,6 @@
                                             <option value="ne">12 per Page</option>
                                         </select>
                                     </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -142,17 +123,19 @@
                     <div class="justify-content-center row col-lg-8">
                         <div class="col-lg-12">
                             <div class="candidate-list-widgets">
-                                <form action="#" class>
+                                <form action="FilterCandidatServlet" method="post">
                                     <div class="g-2 row">
                                         <div class="col-lg-9">
                                             <div class="filler-job-form">
-                                                <i class="uil uil-briefcase-alt"></i><input id="exampleFormControlInput1" placeholder="Job, Company name... " type="search" class="form-control filler-job-input-box form-control" />
+                                                <i class="uil uil-briefcase-alt"></i><input name="value-filter" id="value" placeholder="name " type="search" class="form-control filler-job-input-box form-control" />
                                             </div>
                                         </div>
                                         <div class="col-lg-3">
                                             <div>
-                                                <a class="btn btn-primary" href="#"><i class="uil uil-filter"></i> Filter</a>
-                                                <a class="btn btn-success ms-2" data-bs-toggle="modal" data-bs-target="#new-person"><i class="bi bi-plus-circle"></i> Nouveau </a>
+                                                <input type="submit" class="btn btn-primary" value="Find">
+                                                <a href="newCandidat?op=create"  target="_blank" class="btn btn-success ms-2">
+                                                  <span class="bi bi-plus"></span> Nouveau
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
@@ -172,7 +155,7 @@
                                         <div class="col-auto">
                                             <!-- Candidate avatar -->
                                             <div class="candidate-list-images">
-                                                <a href="#"><img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt class="avatar-md img-thumbnail rounded-circle" /></a>
+                                                <a href="#"><img  src="data:image/jpeg;base64,${Base64.getEncoder().encodeToString(person.profil)}" alt class="avatar-md img-thumbnail rounded-circle" /></a>
                                             </div>
                                         </div>
                                         <div class="col-lg-5">
@@ -202,7 +185,7 @@
                                                 <a href="DeleteCandidateServlet?personId=${person.id}&name =${person.nom}" class="btn btn-danger">
                                                     <i class="mdi mdi-delete"></i>
                                                 </a>
-                                                <a href="EditCandidateServlet?personId=${person.id}" class="btn btn-primary">
+                                                <a href="EditCandidateServlet?op=create&personId=${person.id}" target="_blank" class="btn btn-primary">
                                                     <i class="mdi mdi-pencil"></i>
                                                 </a>
                                             </div>
@@ -246,12 +229,19 @@
                                                                 </tr>
                                                                 </thead>
                                                                 <tbody>
-                                                                <c:forEach var="attach" items="${person.attachements}">
+                                                                <c:forEach var="attach" items="${person.attachments}">
                                                                     <tr>
                                                                         <td>${attach.key}</td>
                                                                         <td>
-                                                                            <a href="downloadAttachment?personId=${person.id}&filename=${attach.key}&download=true">Download</a>
-                                                                            <a href="downloadAttachment?personId=${person.id}&filename=${attach.key}&download=false">View</a>
+                                                                            <a href="downloadAttachment?personId=${person.id}&filename=${attach.key}&download=true" class="btn btn-primary btn-sm">
+                                                                                <i class="mdi mdi-download"></i> <!-- Replace with the appropriate icon class -->
+                                                                            </a>
+                                                                            <a target="_blank" href="downloadAttachment?personId=${person.id}&filename=${attach.key}&download=false" class="btn btn-success btn-sm">
+                                                                                <i class="mdi mdi-eye"></i> <!-- Replace with the appropriate icon class -->
+                                                                            </a>
+                                                                            <a href="DeleteAttachementServlet?personId=${person.id}&filename=${attach.key}" class="btn btn-danger btn-sm">
+                                                                                <i class="mdi mdi-delete"></i> <!-- Replace with the appropriate icon class -->
+                                                                            </a>
                                                                         </td>
                                                                     </tr>
                                                                 </c:forEach>
@@ -292,7 +282,7 @@
     </div>
 </section>
 
-<tags:new-person-modal/>
+<%--<tags:new-person-modal/>--%>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -302,6 +292,12 @@
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
 <script>
     $(document).ready(function() {
+
+        // Pagination settings
+        const itemsPerPage = 10; // Number of items to display per page
+        let currentPage = 1; // Current page number
+        const totalPages = 4; // Total number of pages
+
         var counter = 1;
         function initAddAttachButton() {
 
@@ -364,10 +360,6 @@
             });
 
         }
-        // Pagination settings
-        const itemsPerPage = 10; // Number of items to display per page
-        let currentPage = 1; // Current page number
-        const totalPages = 4; // Total number of pages
 
         // Display the current page
         function displayCurrentPage() {
@@ -413,10 +405,7 @@
         displayCurrentPage();
 
         initAddAttachButton();
-
-
         // PROFIL PICTURE
-
         $('#input-profil-picture').change(function(){
             var file = this.files[0];
             var fileType = file.type.toLowerCase();
@@ -452,7 +441,8 @@
                 country: 'required',
                 description: {
                     required: true
-                }
+                },
+
             },
             messages: {
                 nom: 'Please enter your Nom',

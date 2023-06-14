@@ -2,7 +2,6 @@ package mg.javaee.test.ressources;
 
 import com.github.javafaker.Faker;
 import jakarta.servlet.ServletConfig;
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -55,7 +54,7 @@ public class PersonRessources extends HttpServlet {
             person.setField(faker.job().field());
             person.setAddress(faker.address().fullAddress());
             person.setPayRate(faker.number().randomDouble(2, 100, 1000));
-            person.setAttachements(generateAttachments());
+            person.setAttachments(generateAttachments());
 
             persons.add(person);
         }
@@ -108,6 +107,7 @@ public class PersonRessources extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<Person> personList = personService.findAll();
+        System.out.println(personList.get(0).getAttachments().size());
         req.setAttribute("personList",personList);
         req.getRequestDispatcher("/jsp/index.jsp").forward(req,resp);
     }
@@ -144,7 +144,8 @@ public class PersonRessources extends HttpServlet {
         String email = req.getParameter("email");
         Double payRate = Double.parseDouble(req.getParameter("pay-rate"));
         String country = req.getParameter("country");
-       // String[] selectedFields = req.getParameterValues("multiSelect");
+        String[] selectedItems = req.getParameterValues("selectedItems");
+        String selectedJob = req.getParameter("job");
 
         Person person = Person.builder()
                 .nom(nom)
@@ -153,12 +154,13 @@ public class PersonRessources extends HttpServlet {
                 .contact(contact)
                 .description(description)
                 .rate(rate)
+                .field(selectedJob)
                 .email(email)
-              //  .skills(List.of(selectedFields))
+                .skills(List.of(selectedItems))
                 .payRate(payRate)
                 .country(country)
                 .profil(toBytes(filePart.getInputStream()))
-                .attachements(extractDocuments(req))
+                .attachments(extractDocuments(req))
                 .build();
 
         personService.save(person);
@@ -219,4 +221,5 @@ public class PersonRessources extends HttpServlet {
        extractInfo(req);
        doGet(req,resp);
     }
+
 }

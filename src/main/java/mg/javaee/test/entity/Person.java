@@ -3,7 +3,6 @@ package mg.javaee.test.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Blob;
 import java.util.List;
 import java.util.Map;
 
@@ -52,5 +51,5 @@ public class Person {
     @MapKeyColumn(name = "file_name")
     @Lob
     @Column(name = "file_data", columnDefinition = "LONGBLOB")
-    private Map<String,Byte[]> attachements;
+    private Map<String,Byte[]> attachments;
 }

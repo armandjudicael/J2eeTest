@@ -39,6 +39,6 @@ public class DeleteCandidateServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long personId = Long.parseLong(req.getParameter("personId")) ;
         personService.deleteById(personId);
-        resp.sendRedirect("/PersonList");
+        resp.sendRedirect("PersonList");
     }
 }
