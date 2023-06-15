@@ -121,7 +121,16 @@
                   <label for="input-country" class="form-label">Country</label>
                   <select name="country" id="input-country" class="form-control">
                     <option value="">Select a country</option>
-                    <!-- Add more country options as needed -->
+                    <option value="USA">United States</option>
+                    <option value="CAN">Canada</option>
+                    <option value="GBR">United Kingdom</option>
+                    <option value="AUS">Australia</option>
+                    <option value="GER">Germany</option>
+                    <option value="FRA">France</option>
+                    <option value="JPN">Japan</option>
+                    <option value="CHN">China</option>
+                    <option value="BRA">Brazil</option>
+                    <option value="IND">India</option>
                   </select>
                 </div>
               </div>

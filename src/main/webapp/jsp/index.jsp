@@ -194,9 +194,6 @@
                                                 <a href="DeleteCandidateServlet?personId=${person.id}&name =${person.nom}" class="btn btn-danger">
                                                     <i class="mdi mdi-delete"></i>
                                                 </a>
-                                                <a href="EditCandidateServlet?op=create&personId=${person.id}" target="_blank" class="btn btn-primary">
-                                                    <i class="mdi mdi-pencil"></i>
-                                                </a>
                                             </div>
                                         </div>
                                     </div>

@@ -53,6 +53,7 @@ JavaEETest is a Java EE web application built using Maven. It utilizes several l
 
 ## Installation
 
+1. Run docker image :
 
 ````shell
 git clone https://github.com/armandjudicael/J2eeTest.git
@@ -64,50 +65,10 @@ git clone https://github.com/armandjudicael/J2eeTest.git
 ````shell
 docker-compose up
  ````
-
-
-[//]: # (1. Pull or build docker image :)
-
-[//]: # (    )
-[//]: # ()
-[//]: # (   - Fecthing image from dockerhub : )
-
-[//]: # (       ```shell)
-
-[//]: # (       docker pull javaeeTest:latest)
-
-[//]: # (     )
-[//]: # (   - Build docker image :)
-
-[//]: # (   ````shell)
-
-[//]: # (git clone https://github.com/armandjudicael/J2eeTest.git)
-
-[//]: # (````)
-
-[//]: # (   ````shell)
-
-[//]: # ( cd  javaeeTest)
-
-[//]: # (````)
-
-[//]: # (   ````shell)
-
-[//]: # (docker build -t javaeeTest .)
-
-[//]: # (````)
-
-[//]: # ()
-[//]: # (2. run the docker image :)
-
-[//]: # (   ```shell)
-
-[//]: # (    docker run -p 8082:8082 javaeeTest)
-
-3. Open the link below to your browser :
-   ```shell
-    http://localhost:8080/javaeeTest-1.0-SNAPSHOT
-
+2. Open the link below to your browser :
+```
+http://localhost:8080/javaeeTest-1.0-SNAPSHOT
+```
 ## Dependencies
 
 The project relies on the following dependencies:

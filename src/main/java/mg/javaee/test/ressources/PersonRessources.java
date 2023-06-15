@@ -114,23 +114,8 @@ public class PersonRessources extends HttpServlet {
     private void extractInfo(HttpServletRequest req) throws ServletException, IOException {
         // Retrieve uploaded file
         Part filePart = req.getPart("profil_picture");
-        String uploadPath = getUploadDir(req);
         String fileName = filePart.getSubmittedFileName();
-        Path filePath = Path.of(uploadPath, fileName);
-        // Save the uploaded file to the specified directory
-        try (InputStream fileContent = filePart.getInputStream()) {
-            Files.copy(fileContent, filePath, StandardCopyOption.REPLACE_EXISTING);
-        }
         persistUser(req, filePart, fileName);
-    }
-
-    private static String getUploadDir(HttpServletRequest req) {
-        String uploadPath = req.getServletContext().getRealPath("") + File.separator + UPLOAD_DIRECTORY;
-        File uploadDir = new File(uploadPath);
-        if (!uploadDir.exists()) {
-            boolean mkdir = uploadDir.mkdir();
-        }
-        return uploadPath;
     }
 
     private void persistUser(HttpServletRequest req, Part filePart, String fileName) throws IOException, ServletException {
@@ -147,6 +132,8 @@ public class PersonRessources extends HttpServlet {
         String[] selectedItems = req.getParameterValues("selectedItems");
         String selectedJob = req.getParameter("job");
 
+        List<String> list = selectedItems!=null ? List.of(selectedItems) : new ArrayList<>();
+
         Person person = Person.builder()
                 .nom(nom)
                 .prenom(prenom)
@@ -156,7 +143,7 @@ public class PersonRessources extends HttpServlet {
                 .rate(star)
                 .field(selectedJob)
                 .email(email)
-                .skills(List.of(selectedItems))
+                .skills(list)
                 .star(payRate)
                 .country(country)
                 .profil(toBytes(filePart.getInputStream()))
@@ -198,7 +185,6 @@ public class PersonRessources extends HttpServlet {
     private Map<String,Byte[]> extractDocuments(HttpServletRequest req) throws ServletException, IOException {
         // Get the collection of uploaded parts
         Collection<Part> parts = req.getParts();
-        String uploadPath = getUploadDir(req);
         Map<String,Byte[]> map = new java.util.HashMap<>();
         // Iterate over the parts and process each uploaded file
         for (Part part : parts) {
@@ -206,10 +192,7 @@ public class PersonRessources extends HttpServlet {
             if (part.getName().startsWith("attach-")) {
                 // Extract the filename from the part
                 String fileName = getFileName(part);
-                // Save the file to the upload directory
-                String filePath = uploadPath+fileName;
                 try (InputStream input = part.getInputStream()) {
-                    Files.copy(input, new File(filePath).toPath(), StandardCopyOption.REPLACE_EXISTING);
                     map.put(fileName,toBytes(input));
                 }
             }
@@ -219,7 +202,10 @@ public class PersonRessources extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
        extractInfo(req);
-       doGet(req,resp);
+        // Retrieve form data
+        String nom = req.getParameter("nom")+req.getParameter("prenom") ;
+       req.setAttribute("name",nom);
+       req.getRequestDispatcher("/jsp/success.jsp").forward(req,resp);
     }
 
 }
