@@ -42,10 +42,9 @@
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
   <!-- Bootstrap Select CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0/dist/css/bootstrap-select.min.css">
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 
 
 
@@ -129,8 +128,8 @@
 
               <div class="row mt-3">
                   <div class="col-md-6">
-                    <label for="mySelect">Soft Skills</label>
-                    <select id="mySelect"></select>
+                    <label for="softSkillsSelect">Soft Skills</label>
+                    <select style="width: 350px" id="softSkillsSelect"></select>
                   </div>
                   <div class="col-md-6">
                         <div class="form-group">
@@ -224,36 +223,44 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
 
 <!-- jQuery UI library -->
 <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
 
-<!-- Choices JS-->
-<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
 <script>
   $(document).ready(function() {
+
     var softSkills = [
-      { value: 'communication', label: 'Communication' },
-      { value: 'teamwork', label: 'Teamwork' },
-      { value: 'leadership', label: 'Leadership' },
-      { value: 'adaptability', label: 'Adaptability' },
-      { value: 'problemSolving', label: 'Problem Solving' },
-      { value: 'creativity', label: 'Creativity' },
-      { value: 'timeManagement', label: 'Time Management' },
-      { value: 'criticalThinking', label: 'Critical Thinking' },
-      { value: 'emotionalIntelligence', label: 'Emotional Intelligence' },
-      { value: 'conflictResolution', label: 'Conflict Resolution' }
+      "Communication",
+      "Leadership",
+      "Teamwork",
+      "Problem-solving",
+      "Adaptability",
+      "Time management",
+      "Creativity",
+      "Conflict resolution",
+      "Decision-making",
+      "Emotional intelligence"
     ];
+
     function initChoiceJS() {
-      var selectElement = document.getElementById('mySelect');
-      var choices = new Choices(selectElement,{  removeItemButton: true});
-      softSkills.forEach(function(skill) {
-        var option = new Option(skill.label, skill.value);
-        selectElement.appendChild(option);
+      var selectElement = $('#softSkillsSelect');
+      // Initialize Select2
+      selectElement.select2({
+        placeholder: 'Select soft skills',
+        allowClear: true
       });
+
+      // Populate options
+      softSkills.forEach(function(skill) {
+        var option = new Option(skill, skill);
+        selectElement.append(option);
+      });
+
     }
 
     initChoiceJS();

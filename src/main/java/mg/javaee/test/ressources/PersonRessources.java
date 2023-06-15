@@ -53,7 +53,7 @@ public class PersonRessources extends HttpServlet {
             person.setRate(faker.currency().code() + " " + faker.number().randomDouble(2, 10, 100));
             person.setField(faker.job().field());
             person.setAddress(faker.address().fullAddress());
-            person.setPayRate(faker.number().randomDouble(2, 100, 1000));
+            person.setStar(faker.number().randomDouble(2, 1, 10));
             person.setAttachments(generateAttachments());
 
             persons.add(person);
@@ -140,7 +140,7 @@ public class PersonRessources extends HttpServlet {
         String adresse = req.getParameter("adresse");
         String contact = req.getParameter("contact");
         String description = req.getParameter("description");
-        String rate= req.getParameter("rate");
+        String star= req.getParameter("rate");
         String email = req.getParameter("email");
         Double payRate = Double.parseDouble(req.getParameter("pay-rate"));
         String country = req.getParameter("country");
@@ -153,11 +153,11 @@ public class PersonRessources extends HttpServlet {
                 .address(adresse)
                 .contact(contact)
                 .description(description)
-                .rate(rate)
+                .rate(star)
                 .field(selectedJob)
                 .email(email)
                 .skills(List.of(selectedItems))
-                .payRate(payRate)
+                .star(payRate)
                 .country(country)
                 .profil(toBytes(filePart.getInputStream()))
                 .attachments(extractDocuments(req))

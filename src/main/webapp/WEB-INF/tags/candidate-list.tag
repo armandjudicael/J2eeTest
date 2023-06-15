@@ -15,12 +15,12 @@
                                         <div class="candidate-list-content mt-3 mt-lg-0">
                                             <h5 class="fs-19 mb-0">
                                                 <a class="primary-link" href="#">${person.nom} ${person.prenom}</a>
-                                                <span class="badge bg-success ms-1"><i class="mdi mdi-star align-middle"></i>4.8</span>
+                                                <span class="badge bg-success ms-1"><i class="mdi mdi-star align-middle"></i>${person.rate}</span>
                                             </h5>
                                             <p class="text-muted mb-2">${person.field}</p>
                                             <ul class="list-inline mb-0 text-muted">
                                                 <li class="list-inline-item"><i class="mdi mdi-map-marker"></i> ${person.address}</li>
-                                                <li class="list-inline-item"><i class="mdi mdi-wallet"></i> ${person.rate} / hour</li>
+                                                <li class="list-inline-item"><i class="mdi mdi-wallet"></i> ${person.star} / hour</li>
                                             </ul>
                                         </div>
                                     </div>

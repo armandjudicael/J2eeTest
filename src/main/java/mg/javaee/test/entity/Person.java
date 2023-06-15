@@ -44,7 +44,7 @@ public class Person {
 
     private String address;
 
-    private Double payRate;
+    private Double star;
 
     @ElementCollection
     @CollectionTable(name = "file_mapping", joinColumns = @JoinColumn(name = "container_id"))

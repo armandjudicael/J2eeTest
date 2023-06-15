@@ -2,13 +2,6 @@
 
 [![GitHub Issues](https://img.shields.io/github/issues/armandjudicael/J2eeTest.svg)](https://github.com/armandjudicael/J2eeTest/issues)
 [![GitHub Stars](https://img.shields.io/github/stars/armandjudicael/J2eeTest.svg)](https://github.com/armandjudicael/J2eeTest/stargazers)
-## Table of Contents
-
-- [Projet Screenshoot](#Project Screenshot)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Technologies](#technologies)
-- [Dependencies](#contributing)
 
 ## Project Screenshot
 
@@ -58,24 +51,62 @@ JavaEETest is a Java EE web application built using Maven. It utilizes several l
 - Java EE development environment (e.g., Eclipse, IntelliJ IDEA)
 - Docker (To run the application without struggling Tomcat )
 
-## Getting Started
+## Installation
 
-1. Pull docker image :
 
-   ```shell
-   docker pull javaeeTest:latest
+````shell
+git clone https://github.com/armandjudicael/J2eeTest.git
+````
+   ````shell
+ cd  javaeeTest
+ ````
 
-2. run the docker image :
-   ```shell
-    docker run -p 8082:8082 javaeeTest
+````shell
+docker-compose up
+ ````
+
+
+[//]: # (1. Pull or build docker image :)
+
+[//]: # (    )
+[//]: # ()
+[//]: # (   - Fecthing image from dockerhub : )
+
+[//]: # (       ```shell)
+
+[//]: # (       docker pull javaeeTest:latest)
+
+[//]: # (     )
+[//]: # (   - Build docker image :)
+
+[//]: # (   ````shell)
+
+[//]: # (git clone https://github.com/armandjudicael/J2eeTest.git)
+
+[//]: # (````)
+
+[//]: # (   ````shell)
+
+[//]: # ( cd  javaeeTest)
+
+[//]: # (````)
+
+[//]: # (   ````shell)
+
+[//]: # (docker build -t javaeeTest .)
+
+[//]: # (````)
+
+[//]: # ()
+[//]: # (2. run the docker image :)
+
+[//]: # (   ```shell)
+
+[//]: # (    docker run -p 8082:8082 javaeeTest)
 
 3. Open the link below to your browser :
    ```shell
-    http://localhost:8082/javaeeTest_war/
-
-4. Source code available at :
-   ```shell
-    https://github.com/armandjudicael/J2eeTest.git
+    http://localhost:8080/javaeeTest-1.0-SNAPSHOT
 
 ## Dependencies
 

@@ -155,7 +155,16 @@
                                         <div class="col-auto">
                                             <!-- Candidate avatar -->
                                             <div class="candidate-list-images">
-                                                <a href="#"><img  src="data:image/jpeg;base64,${Base64.getEncoder().encodeToString(person.profil)}" alt class="avatar-md img-thumbnail rounded-circle" /></a>
+                                                <a href="#">
+                                                    <c:choose>
+                                                        <c:when test="${person.profil != null}">
+                                                            <img src="data:image/jpeg;base64,${Base64.getEncoder().encodeToString(person.profil)}" alt class="avatar-md img-thumbnail rounded-circle" />
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt class="avatar-md img-thumbnail rounded-circle" />
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </a>
                                             </div>
                                         </div>
                                         <div class="col-lg-5">
