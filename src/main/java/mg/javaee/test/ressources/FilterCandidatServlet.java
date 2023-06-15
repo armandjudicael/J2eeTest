@@ -26,7 +26,9 @@ public class FilterCandidatServlet extends HttpServlet {
         // Retrieve form data
         String nom = req.getParameter("value-filter");
         List<Person> byName = personService.findByName(nom);
+        if (byName.isEmpty())
         req.setAttribute("personList",byName);
+        else req.setAttribute("personList",personService.findAll());
         req.getRequestDispatcher("/jsp/index.jsp").forward(req,resp);
     }
 }

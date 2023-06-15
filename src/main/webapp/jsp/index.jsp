@@ -190,8 +190,8 @@
                                         </div>
                                         <div class="col-lg-2">
                                             <!-- Candidate icons -->
-                                            <div class="mt-2 mt-lg-0 d-flex flex-wrap align-items-start gap-1">
-                                                <a href="DeleteCandidateServlet?personId=${person.id}&name =${person.nom}" class="btn btn-danger">
+                                            <div class="mt-2 mt-lg-0 d-flex flex-wrap align-items-end gap-1 justify-content-end">
+                                                <a href="DeleteCandidateServlet?personId=${person.id}&name=${person.nom}" class="btn btn-danger">
                                                     <i class="mdi mdi-delete"></i>
                                                 </a>
                                             </div>
