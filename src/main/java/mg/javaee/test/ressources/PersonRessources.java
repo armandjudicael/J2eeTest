@@ -189,11 +189,13 @@ public class PersonRessources extends HttpServlet {
         // Iterate over the parts and process each uploaded file
         for (Part part : parts) {
             // Check if the part belongs to the "upload-documents" div
-            if (part.getName().startsWith("attach-")) {
+            if (part.getName().startsWith("attach-")){
                 // Extract the filename from the part
-                String fileName = getFileName(part);
-                try (InputStream input = part.getInputStream()) {
-                    map.put(fileName,toBytes(input));
+                if(part.getInputStream().readAllBytes().length != 0){
+                    String fileName = getFileName(part);
+                    try (InputStream input = part.getInputStream()) {
+                        map.put(fileName,toBytes(input));
+                    }
                 }
             }
         }

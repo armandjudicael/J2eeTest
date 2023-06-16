@@ -11,7 +11,6 @@ import java.util.List;
 @Data
 public class PersonService  implements BasicServiceMethod<Person>{
 
-
     private static EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("pu");
     private static EntityManager em = entityManagerFactory.createEntityManager();
     private static PersonService personService;
