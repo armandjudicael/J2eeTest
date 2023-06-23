@@ -28,7 +28,7 @@
           <p class="card-text">Are you sure you want to delete the candicat ${name} ?</p>
           <form action="DeleteCandidateServlet?personId=${personId}" method="POST">
             <button type="submit" class="btn btn-danger">Confirm Delete</button>
-            <a href="index.html" class="btn btn-secondary">Cancel</a>
+            <a href="PersonList" class="btn btn-secondary">Cancel</a>
           </form>
         </div>
       </div>

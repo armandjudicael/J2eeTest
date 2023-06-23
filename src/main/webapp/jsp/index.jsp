@@ -298,80 +298,14 @@
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css">
 <script>
     $(document).ready(function() {
-
         // Pagination settings
-        const itemsPerPage = 10; // Number of items to display per page
         let currentPage = 1; // Current page number
         const totalPages = 4; // Total number of pages
-
         var counter = 1;
-        function initAddAttachButton() {
-
-            $('#add-button').click(function() {
-                // Get the selected file from the input field
-                var fileInput = $('#attach-' + (counter - 1))[0];
-
-                // Check if any file is selected
-                if (fileInput.files.length === 0) {
-                    alert('Please select a file.');
-                    return;
-                }
-
-                var file = fileInput.files[0];
-
-                // Check for duplicate filenames
-                var isDuplicate = false;
-                $('#document-table-body tr').each(function() {
-                    var documentName = $(this).find('td:first').text();
-                    if (documentName === file.name) {
-                        isDuplicate = true;
-                        return false; // Exit the loop if a duplicate is found
-                    }
-                });
-
-                if (isDuplicate) {
-                    alert('Duplicate file detected. Please choose a different file.');
-                    return; // Abort adding the file to the table
-                }
-
-                // Create a new row in the table
-                var newRow = $('<tr></tr>');
-
-                // Create cells for the table row
-                var documentNameCell = $('<td></td>').text(file.name);
-                var typeCell = $('<td></td>').text(file.name.split('.').pop()); // Display the file extension in the 'Type' column
-                var dateCell = $('<td></td>').text(new Date().toISOString().split('T')[0]);
-
-                // Append cells to the new row
-                newRow.append(documentNameCell, typeCell, dateCell);
-
-                // Append the new row to the table body
-                $('#document-table-body').append(newRow);
-
-2
-                var newInput = $("<input>").attr({
-                    "name": "attach-" + counter,
-                    "type": "file",
-                    "id": "attach-" + counter,
-                    "class": "form-control"
-                });
-
-                // Move the old input field to the "upload-documents" div
-                $('#upload-documents').append(fileInput);
-
-                // Insert the new input field as a sibling before the "Add" button
-                $('#add-button').before(newInput);
-
-                counter++;
-            });
-
-        }
-
         // Display the current page
         function displayCurrentPage() {
             $('.pagination .page-item').removeClass('active');
             $('.pagination .page-item:eq(' + currentPage + ')').addClass('active');
-
             // TODO: Update the content based on the current page
             // Example: Show/hide relevant content or make an AJAX request
         }
@@ -382,7 +316,6 @@
                 displayCurrentPage();
             }
         }
-
         // Handle next page event
         function goToNextPage() {
             if (currentPage < totalPages) {
@@ -390,7 +323,6 @@
                 displayCurrentPage();
             }
         }
-
         // Handle specific page number event
         function goToPage(pageNumber) {
             if (pageNumber >= 1 && pageNumber <= totalPages) {
@@ -398,7 +330,6 @@
                 displayCurrentPage();
             }
         }
-
         // Example event listeners using jQuery
         $('.pagination .page-item:first-child').on('click', goToPreviousPage);
         $('.pagination .page-item:last-child').on('click', goToNextPage);
@@ -406,74 +337,8 @@
             const pageNumber = parseInt($(this).text());
             goToPage(pageNumber);
         });
-
         // Initial display
         displayCurrentPage();
-
-        initAddAttachButton();
-        // PROFIL PICTURE
-        $('#input-profil-picture').change(function(){
-            var file = this.files[0];
-            var fileType = file.type.toLowerCase();
-            var allowedExtensions = ['jpeg', 'jpg', 'png', 'gif'];
-
-                var reader = new FileReader();
-                reader.onloadend = function() {
-                    $('#uploaded-picture').attr('src', reader.result);
-                }
-                if (file) {
-                    reader.readAsDataURL(file);
-                }
-            // }
-        });
-
-        // FROM VALIDATION
-
-        $('#form-nouveau-societe').validate({
-            rules: {
-                nom: 'required',
-                prenom: 'required',
-                adresse: 'required',
-                contact: 'required',
-                email: {
-                    required: true,
-                    email: true
-                },
-                rate: {
-                    required: true,
-                    range: [1, 10]
-                },
-                'pay-rate': 'required',
-                country: 'required',
-                description: {
-                    required: true
-                },
-
-            },
-            messages: {
-                nom: 'Please enter your Nom',
-                prenom: 'Please enter your Prenom',
-                adresse: 'Please enter your Adresse',
-                contact: 'Please enter your Contact',
-                email: {
-                    required: 'Please enter your Email',
-                    email: 'Please enter a valid Email'
-                },
-                rate: {
-                    required: 'Please enter a Rate',
-                    range: 'Rate must be between 1 and 10'
-                },
-                'pay-rate': 'Please enter Pay Rate',
-                country: 'Please select a Country',
-                description: {
-                    required: "Please enter a description"
-                }
-            },
-            submitHandler: function(form) {
-                form.submit();
-            }
-        });
-
     });
 </script>
 </body>

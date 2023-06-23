@@ -1,4 +1,4 @@
-package mg.javaee.test.ressources;
+package mg.javaee.test.controller;
 
 import com.github.javafaker.Faker;
 import jakarta.servlet.ServletConfig;
@@ -10,15 +10,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import mg.javaee.test.entity.Person;
-import mg.javaee.test.service.PersonService;
+import mg.javaee.test.service.PersonRepository;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 @WebServlet(name = "PersonList",value = {"/","/PersonList", "/addPerson"})
@@ -27,14 +25,17 @@ import java.util.*;
         maxFileSize = 1024*1024*100,
         maxRequestSize = 1024*1024*100
 )
+
 public class PersonRessources extends HttpServlet {
-    private PersonService personService;
+
+
+    private PersonRepository personRepository;
     private static  final  String UPLOAD_DIRECTORY = "uploads";
     private static final String ATTACH_DIRECTORY_NAME = "attach";
     @Override
     public void init(ServletConfig config) throws ServletException {
-        personService = PersonService.getInstance();
-        personService.saveAll(generateMockPersons(10));
+       personRepository = PersonRepository.getInstance();
+       personRepository.saveAll(generateMockPersons(10));
     }
 
     public static List<Person> generateMockPersons(int count) {
@@ -43,8 +44,8 @@ public class PersonRessources extends HttpServlet {
 
         for (int i = 0; i < count; i++) {
             Person person = new Person();
-            person.setNom(faker.name().lastName());
-            person.setPrenom(faker.name().firstName());
+            person.setName(faker.name().lastName());
+            person.setFirstname(faker.name().firstName());
             person.setDescription(faker.lorem().sentence());
             person.setContact(faker.phoneNumber().phoneNumber());
             person.setEmail(faker.internet().emailAddress());
@@ -106,7 +107,7 @@ public class PersonRessources extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<Person> personList = personService.findAll();
+        List<Person> personList = personRepository.findAll();
         System.out.println(personList.get(0).getAttachments().size());
         req.setAttribute("personList",personList);
         req.getRequestDispatcher("/jsp/index.jsp").forward(req,resp);
@@ -120,9 +121,9 @@ public class PersonRessources extends HttpServlet {
 
     private void persistUser(HttpServletRequest req, Part filePart, String fileName) throws IOException, ServletException {
         // Retrieve form data
-        String nom = req.getParameter("nom");
-        String prenom = req.getParameter("prenom");
-        String adresse = req.getParameter("adresse");
+        String name = req.getParameter("name");
+        String firstname = req.getParameter("firstname");
+        String adress = req.getParameter("adress");
         String contact = req.getParameter("contact");
         String description = req.getParameter("description");
         String star= req.getParameter("rate");
@@ -135,9 +136,9 @@ public class PersonRessources extends HttpServlet {
         List<String> list = selectedItems!=null ? List.of(selectedItems) : new ArrayList<>();
 
         Person person = Person.builder()
-                .nom(nom)
-                .prenom(prenom)
-                .address(adresse)
+                .name(name)
+                .firstname(firstname)
+                .address(adress)
                 .contact(contact)
                 .description(description)
                 .rate(star)
@@ -150,7 +151,7 @@ public class PersonRessources extends HttpServlet {
                 .attachments(extractDocuments(req))
                 .build();
 
-        personService.save(person);
+        personRepository.save(person);
     }
 
     private Byte[] toBytes( InputStream inputStream ){

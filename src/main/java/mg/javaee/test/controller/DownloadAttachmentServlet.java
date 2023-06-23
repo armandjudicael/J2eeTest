@@ -1,4 +1,4 @@
-package mg.javaee.test.ressources;
+package mg.javaee.test.controller;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import mg.javaee.test.entity.Person;
-import mg.javaee.test.service.PersonService;
+import mg.javaee.test.service.PersonRepository;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -14,13 +14,13 @@ import java.util.Map;
 
 @WebServlet("/downloadAttachment")
 public class DownloadAttachmentServlet extends HttpServlet {
-    private PersonService personService;
+    private PersonRepository personRepository;
     /**
      * @throws ServletException
      */
     @Override
     public void init() throws ServletException {
-        personService = PersonService.getInstance();
+        personRepository = PersonRepository.getInstance();
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -29,7 +29,7 @@ public class DownloadAttachmentServlet extends HttpServlet {
         boolean isDownload = Boolean.parseBoolean(request.getParameter("download"));
 
         // Retrieve the Person object based on the personId from your data source
-        Person person = personService.findById(personId);
+        Person person = personRepository.findById(personId);
 
         if (person != null) {
             // Retrieve the attachment byte array from the Person's attachements map based on the filename

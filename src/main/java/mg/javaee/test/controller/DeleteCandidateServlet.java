@@ -1,25 +1,25 @@
-package mg.javaee.test.ressources;
+package mg.javaee.test.controller;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import mg.javaee.test.service.PersonService;
+import mg.javaee.test.service.PersonRepository;
 
 import java.io.IOException;
 
 @WebServlet(name = "DeleteCandidateServlet",value = {"/DeleteCandidateServlet"})
 public class DeleteCandidateServlet extends HttpServlet {
 
-    private PersonService personService;
+    private PersonRepository personRepository;
 
     /**
      * @throws ServletException
      */
     @Override
     public void init() throws ServletException {
-       personService = PersonService.getInstance();
+       personRepository = PersonRepository.getInstance();
     }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -38,7 +38,7 @@ public class DeleteCandidateServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Long personId = Long.parseLong(req.getParameter("personId")) ;
-        personService.deleteById(personId);
+        personRepository.deleteById(personId);
         resp.sendRedirect("PersonList");
     }
 }

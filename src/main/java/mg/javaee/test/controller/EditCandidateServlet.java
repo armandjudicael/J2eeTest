@@ -1,4 +1,4 @@
-package mg.javaee.test.ressources;
+package mg.javaee.test.controller;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

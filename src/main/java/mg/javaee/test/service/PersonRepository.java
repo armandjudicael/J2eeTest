@@ -9,15 +9,15 @@ import java.util.List;
 
 
 @Data
-public class PersonService  implements BasicServiceMethod<Person>{
+public class PersonRepository implements BasicRepositoryMethod<Person> {
 
     private static EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("pu");
     private static EntityManager em = entityManagerFactory.createEntityManager();
-    private static PersonService personService;
-    public static PersonService getInstance (){
-        if (personService == null)
-            personService = new PersonService();
-        return personService;
+    private static PersonRepository personRepository;
+    public static PersonRepository getInstance (){
+        if (personRepository == null)
+            personRepository = new PersonRepository();
+        return personRepository;
     }
     /**
      * @param object
@@ -26,9 +26,7 @@ public class PersonService  implements BasicServiceMethod<Person>{
     @Override
     public Collection<Person> saveAll(Collection<Person> object){
         for (Person person : object) {
-            em.getTransaction().begin();
-            em.persist(person);
-            em.getTransaction().commit();
+                 save(person);
         }
         return object;
     }
@@ -39,9 +37,7 @@ public class PersonService  implements BasicServiceMethod<Person>{
      */
     @Override
     public Person save(Person object){
-        em.getTransaction().begin();
         em.persist(object);
-        em.getTransaction().commit();
         return object;
     }
     /**
@@ -96,7 +92,7 @@ public class PersonService  implements BasicServiceMethod<Person>{
      */
     @Override
     public List<Person> findAll() {
-        String jpql = "SELECT p FROM Person p"; // Replace "Entity" with your entity class name
+        String jpql = "SELECT p FROM Person p";
         TypedQuery<Person> query = em.createQuery(jpql,Person.class);
         return query.getResultList();
     }
@@ -121,7 +117,7 @@ public class PersonService  implements BasicServiceMethod<Person>{
 
     public List<Person> findByName(String character){
         // Create the JPQL query
-        String jpql = "SELECT p FROM Person p WHERE p.nom  LIKE :character or p.prenom  LIKE :character ";
+        String jpql = "SELECT p FROM Person p WHERE p.name  LIKE :character or p.firstname  LIKE :character ";
 // Execute the query
         TypedQuery<Person> query = em.createQuery(jpql, Person.class);
         query.setParameter("character", "%" + character + "%"); // Adding wildcards to match any occurrence of the character

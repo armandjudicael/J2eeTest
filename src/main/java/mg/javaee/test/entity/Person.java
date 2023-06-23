@@ -19,10 +19,10 @@ public class Person {
     private Long id;
 
     @Column(name = "name")
-    private String nom;
+    private String name;
 
     @Column(name = "prenom")
-    private String prenom;
+    private String firstname;
 
     private String description;
 
